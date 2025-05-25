@@ -1,0 +1,59 @@
+name: Build, Push and Deploy Docker Images
+
+on:
+  push:
+    branches:
+      - myevent-app-samson
+      - develop
+
+jobs:
+  build-and-push:
+    name: 🔨 Build & Push Docker Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: ⏬ Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: 🐳 Build & Push Backend Image
+        run: |
+          docker build -t ghcr.io/${{ github.actor }}/eventapp-backend:latest ./TP_EVENT_API
+          docker push ghcr.io/${{ github.actor }}/eventapp-backend:latest
+
+      - name: 🖼️ Build & Push Frontend Image
+        run: |
+          docker build -t ghcr.io/${{ github.actor }}/eventapp-frontend:latest ./TP_EVENT_WEB_APP
+          docker push ghcr.io/${{ github.actor }}/eventapp-frontend:latest
+
+  deploy:
+    name: 🚀 Deploy to Remote Server
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: 🔐 Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📦 Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd ~/apps/myevent-app &&
+            docker compose pull &&
+            docker compose down &&
+            docker compose up -d
+          '

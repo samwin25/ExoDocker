@@ -71,7 +71,7 @@ Accessible via l'IP publique du serveur :
 | Composant | URL en ligne                                                                 | Port |
 | --------- | ---------------------------------------------------------------------------- | ---- |
 | Frontend  | [http://157.180.38.74:8082](http://157.180.38.74:8082)                       | 8082 |
-| Backend   | [http://157.180.38.74:9002/api/events](http://157.180.38.74:9002/api/events) | 9002 |
+| Backend   | [http://157.180.38.74:9002/api/events](http://157.180.38.74:9002/events) | 9002 |
 
 ---
 

@@ -6,44 +6,63 @@ services:
     container_name: event_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: eventuser
-      POSTGRES_PASSWORD: eventpass
-      POSTGRES_DB: eventdb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    # ports:                       # <-- Supprimé pour sécurité (accès local uniquement)
-    #   - "5433:5432"
+    ports:
+      - "5433:5432"
     networks:
       - eventnet
 
   backend:
+    build:
+      context: ./TP_EVENT_API
     image: ghcr.io/samwin25/eventapp-backend:latest
     container_name: event_backend
     restart: unless-stopped
     depends_on:
       - postgres
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: eventuser
-      DB_PASSWORD: eventpass
-      DB_NAME: eventdb
-      PORT: 9002
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      PORT: ${BACKEND_PORT}
     ports:
-      - "9002:9002"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     networks:
       - eventnet
+    profiles: ["dev"]
 
   frontend:
+    build:
+      context: ./TP_EVENT_WEB_APP
     image: ghcr.io/samwin25/eventapp-frontend:latest
     container_name: event_frontend
     restart: unless-stopped
     depends_on:
       - backend
     environment:
-      - REACT_APP_API_URL=http://backend:9002
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
     ports:
       - "8082:8082"
+    networks:
+      - eventnet
+    profiles: ["dev"]
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - backend
+      - frontend
     networks:
       - eventnet
 
