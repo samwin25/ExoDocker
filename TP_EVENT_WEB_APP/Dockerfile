@@ -5,7 +5,7 @@ FROM node:22 AS builder
 WORKDIR /app
 
 # Injecter la variable d'env au build
-ARG REACT_APP_API_URL
+ARG REACT_APP_API_URL=http://backend:8080
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Copier les fichiers de configuration
