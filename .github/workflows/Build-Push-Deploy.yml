@@ -35,7 +35,7 @@ jobs:
           docker buildx build \
           --build-arg REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} \
           -t ghcr.io/${{ github.actor }}/eventapp-frontend:latest \
-          -f Dockerfile \
+          -f TP_EVENT_WEB_APP/Dockerfile \
           --push \
           TP_EVENT_WEB_APP/
 
