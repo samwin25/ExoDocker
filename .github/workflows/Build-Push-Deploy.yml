@@ -35,9 +35,9 @@ jobs:
           docker buildx build \
           --build-arg REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} \
           -t ghcr.io/${{ github.actor }}/eventapp-frontend:latest \
-          -f TP_EVENT_WEB_APP/Dockerfile \
+          -f Dockerfile \
           --push \
-          .
+          TP_EVENT_WEB_APP/
 
   deploy:
     name: 🚀 Deploy to Remote Server
