@@ -36,7 +36,7 @@ jobs:
           --build-arg REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} \
           -t ghcr.io/${{ github.actor }}/eventapp-frontend:latest \
           -f TP_EVENT_WEB_APP/Dockerfile \
-          --push
+          --push \
           .
 
   deploy:
