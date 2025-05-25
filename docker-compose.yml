@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   postgres:
@@ -21,7 +20,7 @@ services:
       context: ./TP_EVENT_API
     image: ghcr.io/samwin25/eventapp-backend:latest
     container_name: event_backend
-    restart: unless-stopped
+    restart: always
     depends_on:
       - postgres
     environment:
@@ -40,9 +39,11 @@ services:
   frontend:
     build:
       context: ./TP_EVENT_WEB_APP
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
     image: ghcr.io/samwin25/eventapp-frontend:latest
     container_name: event_frontend
-    restart: unless-stopped
+    restart: always
     depends_on:
       - backend
     environment:

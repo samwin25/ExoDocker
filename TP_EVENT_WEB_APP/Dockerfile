@@ -4,6 +4,10 @@ FROM node:22 AS builder
 # Créer un répertoire de travail
 WORKDIR /app
 
+# Injecter la variable d'env au build
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Copier les fichiers de configuration
 COPY package*.json ./
 
